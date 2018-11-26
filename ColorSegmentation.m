@@ -6,11 +6,14 @@ thumbnails = 'D:\Projects\GreenStand\ImageData\Thumbnails';
 segmented = 'D:\Projects\GreenStand\ImageData\ColorSegmented';
 pine = 'D:\Projects\GreenStand\ImageData\Pinus_Pendula';
 templateNeedles = imread('templateC.tif');
-
+templateNeedles2 = imread('templateD.tif');
 ds = datastore({location1},'Type','image','FileExtensions',{'.jpg','.tif','.png'});
 output = [];
 [dsRows,dsCols] = size(ds.Files);
 wb = waitbar(0);
+
+gpuTemplateNeedles = gpuArray(templateNeedles);
+gpuTemplateNeedles2 = gpuArray(templateNeedles2);
 for i = 1:dsRows
     try
         waitbar(i/dsRows);
@@ -34,10 +37,34 @@ for i = 1:dsRows
         
         % try to find pinus_pendula
         imageGray = rgb2gray(SC);
+        gpuImageGray = gpuArray(imageGray);
+        gpuMatch = normxcorr2(gpuTemplateNeedles,gpuImageGray);
+        match = gather(gpuMatch);
         
-        [values,match] = templateMatch(imageGray,templateNeedles);
+       
         f = fullfile(segmented,strcat(name,'TEMPLATEMATCH','.tif'));
         imwrite(match,f);
+        
+        
+        BW = imbinarize(match,'global');
+	     f = fullfile(segmented,strcat(name,'TEMPLATEMATCHMASK','.tif'));
+      
+        imwrite(BW,f);
+
+        gpuMatch2 = normxcorr2(gpuTemplateNeedles2,gpuImageGray);
+        match2 = gather(gpuMatch2);
+        
+       
+        f = fullfile(segmented,strcat(name,'TEMPLATEMATCH2','.tif'));
+        imwrite(match2,f);
+        
+        
+        BW = imbinarize(match2,'global');
+	     f = fullfile(segmented,strcat(name,'TEMPLATEMATCHMASK2','.tif'));
+      
+        imwrite(BW,f);
+
+
     catch ME
         continue;
     end
