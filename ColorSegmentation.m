@@ -2,7 +2,10 @@ clear all;
 
 location1 = 'D:\Projects\GreenStand\ImageData';
 thumbnails = 'D:\Projects\GreenStand\ImageData\Thumbnails';
+
 segmented = 'D:\Projects\GreenStand\ImageData\ColorSegmented';
+pine = 'D:\Projects\GreenStand\ImageData\Pinus_Pendula';
+templateNeedles = imread('templateC.tif');
 
 ds = datastore({location1},'Type','image','FileExtensions',{'.jpg','.tif','.png'});
 output = [];
@@ -29,7 +32,12 @@ for i = 1:dsRows
         f = fullfile(segmented,strcat(name,'MASK','.tif'));
         imwrite(BW,f);
         
+        % try to find pinus_pendula
+        imageGray = rgb2gray(SC);
         
+        [values,match] = templateMatch(imageGray,templateNeedles);
+        f = fullfile(segmented,strcat(name,'TEMPLATEMATCH','.tif'));
+        imwrite(match,f);
     catch ME
         continue;
     end
