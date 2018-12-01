@@ -25,14 +25,13 @@ for i = 1:dsRows
         data = readimage(ds,i);
         [rows,cols] = size(data);
         pixels = zeros(rows * cols,3);
+        
         pr = 1;
-        for r = 1:rows
-            for c = 1:cols
-                pixels(pr,1) = data(r,c);
-                pixels(pr,2) = r;
-                pixels(pr,3) = c;
-                pr = pr + 1;
-            end
+       for r = 1:rows
+            pixels(pr:pr+cols-1,2) = r;
+            pixels(pr:pr+cols-1,1) = data(r,1:cols)';
+            pixels(pr:pr+cols-1,3) = (1:cols)';
+            pr = pr + cols;
         end
         
         
