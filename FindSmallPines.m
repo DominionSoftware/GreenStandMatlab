@@ -2,7 +2,7 @@ clear all;
  close all;
 
 segmented = 'D:\Projects\GreenStand\ImageData\ColorSegmented';
-pine = 'D:\Projects\GreenStand\ImageData\Pinus_Pendula';
+pine = 'D:\Projects\GreenStand\ImageData\Pinus_pendula';
  
  
 ds = datastore({segmented},'Type','image','FileExtensions',{'.jpg','.tif','.png'});
@@ -11,11 +11,12 @@ output = [];
  
 resultImage=  zeros(1000,1000);
 
- 
+ desiredCentroid = [355,455];
  
 for i = 1:dsRows
     try
    
+        
         filePath = ds.Files(i);
         [filepath,name,ext] = fileparts(filePath{1,1});
         if ~contains(name,'TEMPLATEMATCH')
@@ -36,7 +37,16 @@ for i = 1:dsRows
         
         
         pixelsSorted = sortrows(pixels,'descend');
-        resultImage(pixelsSorted(1,2),pixelsSorted(1,3)) = resultImage(pixelsSorted(1,2),pixelsSorted(1,3)) + pixelsSorted(1,1);
+        v = [pixelsSorted(1,2),pixelsSorted(1,3)];
+       
+        d = norm(v-desiredCentroid);
+        if (d < 75)
+            resultImage(pixelsSorted(1,2),pixelsSorted(1,3)) = resultImage(pixelsSorted(1,2),pixelsSorted(1,3)) + pixelsSorted(1,1);
+            newStr = erase(name,'TEMPLATEMATCH');
+            segPath = fullfile(filepath,strcat(newStr,'SEG.tif'));
+            movefile(segPath,pine);
+            movefile(filePath{1,1},pine);
+        end
        
       
     catch ME
@@ -45,7 +55,8 @@ for i = 1:dsRows
 
 end
 imtool(resultImage);
-    
+fitswrite(resultImage,'result.fits');    
+
 
 
 
