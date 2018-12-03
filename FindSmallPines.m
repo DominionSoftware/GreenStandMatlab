@@ -22,21 +22,16 @@ for i = 1:dsRows
         if ~contains(name,'TEMPLATEMATCH')
             continue;
         end
+        newStr = erase(name,'TEMPLATEMATCH');
+        segPath = fullfile(filepath,strcat(newStr,'SEG.tif'));
+        displayImage = imread(segPath);
        
-        data = readimage(ds,i);
-        [rows,cols] = size(data);
-        pixels = zeros(rows * cols,3);
+        imshow(displayImage);
         
-        pr = 1;
-       for r = 1:rows
-            pixels(pr:pr+cols-1,2) = r;
-            pixels(pr:pr+cols-1,1) = data(r,1:cols)';
-            pixels(pr:pr+cols-1,3) = (1:cols)';
-            pr = pr + cols;
-        end
-        
-        
-        pixelsSorted = sortrows(pixels,'descend');
+         data = readimage(ds,i);
+         imshow(data);
+         pixelsSorted = imageTo3DPoints(data);
+       
         v = [pixelsSorted(1,2),pixelsSorted(1,3)];
        
         d = norm(v-desiredCentroid);
