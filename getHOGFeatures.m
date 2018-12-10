@@ -1,13 +1,19 @@
+
+% script to get the HoG features from real-word data for classification.
+
 close all;
 clear all;
-extractionFolder  = 'D:\Projects\GreenStand\ImageData\ColorSegmented';
+
+% point to folder.
+extractionFolder  = 'C:\Users\rickf\Google Drive\Greenstand\ImageData';
 extractionSet     = imageDatastore(extractionFolder, 'IncludeSubfolders', false);
-displayImages = false;
+displayImages = true;
+wb = waitbar(0);
 
-
-img = readimage(extractionSet, 2);
-img = rgb2gray(img);
-[hog_NxN, vishNxN] = extractHOGFeatures(img,'CellSize',[16 , 16]);
+img = readAndScaleAndCropImage(extractionSet, 20);
+img = imsharpen(img);
+[gm,ga] = imgradient(rgb2gray(seg),'roberts');
+[hog_NxN, vishNxN] = extractHOGFeatures(ga,'CellSize',[8 , 8]);
 if (displayImages)
     figure;
     subplot(2,3,1:3);
@@ -18,7 +24,7 @@ if (displayImages)
     plot(vishNxN);
 end
 
-cellSize = [16 16];
+cellSize = [8 8];
 hogFeatureSize = length(hog_NxN);
 numImages = numel(extractionSet.Files);
 extractedFeatures = zeros(numImages, hogFeatureSize, 'single');
@@ -30,10 +36,8 @@ for i = 1:numImages
     try
         path = extractionSet.Files{i,1};
         
-        srcimg = readimage(extractionSet, i);
-        
-        img = rgb2gray(srcimg);
-        
+        img = readAndScaleAndCropImage(extractionSet, i);
+        img = imsharpen(img);
         [hf , vishNxN] = extractHOGFeatures(img,'CellSize', cellSize);
         if (displayImages)
             subplot(2,3,1:3);
@@ -48,6 +52,7 @@ for i = 1:numImages
         end
         extractedFeatures(i, :) = hf;
         extractionPaths = [extractionPaths,path];
+        wb = waitbar(i/numImages);
     catch ME
         disp(ME);
     end
@@ -57,7 +62,7 @@ end
 extractedFeatures(skippedExtraction',:) = [];
 
 
-save('extractedFeaturesData.mat','extractedFeatures','extractionPaths');
+save('extractedFeaturesData.mat','extractedFeatures','extractionPaths','-v7.3');
 
 
 

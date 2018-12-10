@@ -3,19 +3,19 @@
 close all;
 clear all;
  
-resultsPath = 'D:\Projects\GreenStand\ImageData\FinalResults\';
+resultsPath = 'C:\Users\rickf\Google Drive\Greenstand\SVM\FinalResults\';
 
 load('trainingData.mat');
 
-classifier = fitcecoc(trainingFeatures, trainingLabels);
+classifierHOG = fitcecoc(trainingFeaturesHOG, trainingLabels);
 
 
 load('extractedFeaturesData.mat');
 
-predictedLabels = predict(classifier, extractedFeatures);
-[rows,cols] = size(predictedLabels);
+predictedLabelsHOG = predict(classifierHOG, extractedFeatures);
+[rows,cols] = size(predictedLabelsHOG);
 for r = 1:rows
-    outPath = strcat(resultsPath,char(predictedLabels(r,1)));
+    outPath = strcat(resultsPath,char(predictedLabelsHOG(r,1)));
     
     sourcePath = extractionPaths{1,r};
     copyfile(sourcePath,outPath);
