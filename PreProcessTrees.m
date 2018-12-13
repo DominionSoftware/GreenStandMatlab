@@ -1,8 +1,8 @@
 clear all;
 
-location1 = 'D:\Projects\GreenStand\ImageData\Images11.5.18';
-thumbnails = 'D:\Projects\GreenStand\ImageData\Thumbnails';
-defective = 'C:\Users\rickf\Google Drive\Greenstand\Defective';
+location1 = 'C:\Users\User\Google Drive\Greenstand\HueAdjusted';
+thumbnails = 'C:\Users\User\Google Drive\Greenstand\Thumbnails';
+defective = 'C:\Users\User\Google Drive\Greenstand\Defective';
 
 ds = datastore({location1},'Type','image','FileExtensions',{'.jpg','.tif','.png'});
  
