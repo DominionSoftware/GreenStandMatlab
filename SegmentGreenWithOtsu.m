@@ -12,11 +12,10 @@ channelA = channelA./ max(max(channelA));
 [counts, ~] = imhist(channelA);
  
  cut = otsuthresh(counts);
- channelL = labIm1(:,:,1);
-  
-channelL(channelA > cut) = 0;
-labIm1(:,:,1) = channelL;
-rgbImage = lab2rgb(labIm1);
 
+mask =imbinarize(channelA,cut);
+mask3 = cat(3, mask, mask, mask);
+rgbImage = lab2rgb(labIm1);
+rgbImage(mask3) = 0;
 end
 
