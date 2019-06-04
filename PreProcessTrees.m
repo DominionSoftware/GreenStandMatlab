@@ -1,10 +1,10 @@
 clear all;
+inputPath = '';
 
-location1 = 'C:\Users\User\Google Drive\Greenstand\HueAdjusted';
 thumbnails = 'C:\Users\User\Google Drive\Greenstand\Thumbnails';
 defective = 'C:\Users\User\Google Drive\Greenstand\Defective';
 
-ds = datastore({location1},'Type','image','FileExtensions',{'.jpg','.tif','.png'});
+ds = imageDataStore(inputPath,'Type','image','FileExtensions',{'.jpg','.tif','.png'});
  
 [dsRows,dsCols] = size(ds.Files);
  
